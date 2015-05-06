@@ -12,7 +12,7 @@
 
 \section{Intro}
 
-The aim of this article is to design a convenient method for calculating infantryman movement speed through an arbitrary terrain by feet and to test it on practice. This article is planned as a part of a series on infantryman computer aided system design. Tests will be conveyed with the help of MilSim participants in conditions close to battlefield ones.
+The aim of this article is to design a convenient method for calculating infantryman movement speed by feet through an arbitrary terrain and to test it on practice. This article is planned as a part of a series on infantryman computer-aided system design. Tests will be conveyed with the help of MilSim participants in conditions close to battlefield ones.
 
 t.b.d.
 
@@ -83,7 +83,7 @@ As it is comparatively difficult to measure slope movement parameters with a con
 
 Energy expenditures may be defined via metabolic equivalent (MET) of an activity, where 1 MET is equal to $4.184\frac{kJ}{kg\cdot{h}}$ \cite{wiki-met}. From \cite{acsm-guidelines} we can see that MET value depends only on velocity if the grade value is fixed and on contrary does not depend on a grade if velocity is constant, i.e. $\frac{MET-MET_{0}}{g} = const$. Thus taking a ratio between an energy consumption level for ascending movement and the one through a horizontal terrain while keeping the same speed we may estimate $k_{u}$.
 
-From \cite{TODO} we have
+Also from \cite{acsm-guidelines} we have
 
 \begin{equation} \label{eq:met-slow}
 MET=\frac{0.1\upsilon+0.018\upsilon g + 3.5}{3.5}
@@ -107,10 +107,18 @@ while \ref{eq:k-definition} and \ref{eq:met-fast} result in
 k_{fast} = \frac{0.03\upsilon_{2}-0.3593 + 0.018g}{0.03\upsilon_{1}-0.3593}
 \end{equation}
 
-where $g$ is a slope grade in percents.
+where $g$ is a slope grade in percents. This approximation is applicable only in a usual human velocities range and for slopes where friction is enough to step without sliding down.
 
-This approximation is applicable only in a usual human velocities range and for slopes where friction is enough to step without sliding down.
+We do not measure $g$ value directly, but we may derive it knowing that by definition it is:
+\begin{equation} \label{eq:g-def}
+g = \frac{H}{L} \cdot 100
+\end{equation}
 
+$H$ in our case is $\Delta h_{\uparrow}$ and $L$ is $L_{HOR\uparrow}$. The latter may be estimated taking into account that terrain slopes have on average similar ascending and descending rates. Then:
+
+\begin{equation}
+L_{HOR\uparrow} = L \cdot \frac{\Delta h_{\uparrow}}{\Delta h_{\uparrow} + \Delta h_{\downarrow}}
+\end{equation}
 
 \newpage
 \appendix
