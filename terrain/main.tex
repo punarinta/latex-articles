@@ -1,0 +1,120 @@
+\documentclass[12pt]{article}
+
+\usepackage[parfill]{parskip}
+\usepackage{mathtools}
+
+\begin{document}
+
+\title{Speed estimations for an unmounted movement through a terrain}
+\author{Vladimir Osipov}
+\date{July 2015}
+\maketitle
+
+\section{Intro}
+
+The aim of this article is to design a convenient method for calculating infantryman movement speed through an arbitrary terrain by feet and to test it on practice. This article is planned as a part of a series on infantryman computer aided system design. Tests will be conveyed with the help of MilSim participants in conditions close to battlefield ones.
+
+t.b.d.
+
+\newpage
+
+\section{Theory}
+
+\subsection{Terrain slowdown reasons}
+
+Generally there are three main slowdown reasons during a passage through any terrain: placement of obstacles on the way (a), terrain flatness on microlevel (b) and terrain flatness on macrolevel (c). The border between microlevel and macrolevel is suggested to put to a value of step length. Factors (a) and (b) can be joined into one characteristic, let us call it \textit{passability} $p$ and describe it below. Macrolevel flatness, in its turn, describes expenditures linked to altitude changes and is definitely a function of those changes. Let us call this a slope effect $s$ and also discuss it below.
+
+As passage time estimations are generally needed when talking about terrain, let us introduce a parameter called \textit{difficulty} $D$, which will be a default movement time multiplier in $t=t_{0}D$, where $t_{0}$ is an ideal terrain passage time and $t$ is a sample terrain passage time, both $t$ and $t_{0}$ are measured at the same energy expenditure rate. As movement through an ideal terrain is fastest by definition let us assume that $D\geq1$ for a non-assisted motion.
+
+
+\subsection{Calculating passability impact}
+Let us define passability as a ratio between the speed of movement through a plain terrain with given obstacles over the movement speed through a terrain with ideal conditions (e.g. a straight flat asphalt road): $p=\upsilon_{t}/\upsilon_{0}$. Thus the impact of passability on difficulty may be described as $D\sim\frac{1}{p}$. Later we will be trying to experimentally find out passability values for different terrain types by measuring travel time ratio on a fixed distance: $p=t_{0}/t_{t}$.
+
+
+\subsection{Deriving slope effect formula}
+Movements upwards and downwards differ. While hill descending for gentle slopes has approximately the same energy expenditures and speeds as a usual flat terrain movement \cite{mets-in-exercise}, hill ascending is significantly more energy demanding, due to the necessity to increase one's potential energy. Slope effect will contribute into difficulty proportionally: $D\sim{s}$. Note that zero slope effect must result in unitary difficulty (if passability is also 1):
+
+\begin{equation} \label{eq:diff-se}
+D=k\cdot(s+1)
+\end{equation}
+
+As in general case an altitude profile of a path is a curve we need to split the whole path into two virtual, generally unequal, parts: movement upwards and movement downwards. Let us mark the altitude increment on every interval as $\Delta{h_{\uparrow}}$ and altitude decrement on the same interval as $\Delta{h_{\downarrow}}$. Let us for further calculations mark their sum as
+
+\begin{equation} \label{eq:alt-change}
+\Delta{h}=\Delta{h_{\uparrow}}+\Delta{h_{\downarrow}}
+\end{equation}
+
+Meanwhile let us introduce a total altitude difference between an ending and a starting point of a path as $\Delta{H}$. To describe a contribution into difficulty we suggest to use the following approach:
+
+\begin{equation} \label{eq:slope-effect}
+s=(k_{u}\cdot\Sigma_{\Delta{h\uparrow}}+k_{d}\cdot\Sigma_{\Delta{h\downarrow}})
+\end{equation}
+
+where $k_{u}$ and $k_{d}$ are coefficients for upwards and downwards movement correspondingly, that will increase with inclination increasing.
+
+During surface tracing (using either GPS track data or a geographic map with altitude isolines) it is easy to get both $\Delta_{H}$ and $\Delta_{h}$ values. Let us calculate $\Delta_{h\uparrow}$ and $\Delta_{h\downarrow}$ based on them. Taking into account \ref{eq:alt-change} and considering that $\Delta_{h\uparrow}-\Delta_{h\downarrow}=\Delta_{H}$ we get $\Delta{h_{\uparrow}}=\frac{\Delta{h}+\Delta{H}}{2}$ and $\Delta{h_{\downarrow}}=\frac{\Delta{h}-\Delta{H}}{2}$.
+
+Slope effect makes sense per unit of length, thus we need to normalize it by dividing on a total path length $L=\sqrt{{L_{hor}}^2 + {\Delta{h}}^2}$, where $L_{hor}$ is a horizontal projection of a path, i.e. distance measured by map. For terrains with relatively small altitude changes $L$ may be directly taken as $L_{hor}$. Together with \ref{eq:diff-se} and \ref{eq:slope-effect} this gives us:
+
+\begin{equation} \label{eq:difficulty}
+\begin{aligned}
+D = \frac{\left[ \frac{ (k_{u}\cdot\Sigma_{\Delta{h\uparrow}}+k_{d}\cdot\Sigma_{\Delta{h\downarrow}}) }{L} \right] + 1}{p} = \frac{ k_{u}\cdot\Sigma_{\Delta{h\uparrow}}+k_{d}\cdot\Sigma_{\Delta{h\downarrow}} + 2L }{2p\cdot{L}} = \\
+= \frac{ \Delta{H}\cdot{(k_{u}-k_{d})} + \Delta{h}\cdot{(k_{u}+k_{d})} + 2L }{2p\cdot{L}}
+\end{aligned}
+\end{equation}
+
+or in a length-agnostic form as:
+
+\begin{equation} \label{eq:difficulty-per-unit}
+D=\frac{ \Delta{H}\cdot{(k_{u}-k_{d})} + \Delta{h}\cdot{(k_{u}+k_{d})} + 2 }{2p}
+\end{equation}
+
+To calculate a route difficulty in a numerical form we now only need coefficients $k_{u}$ and $k_{d}$ that are supposed to be a function of physiological properties of human body. We will consider this issue in a next chapter.
+
+
+\subsection{Slope effect coefficients}
+We have earlier suggested that $k_{u}$ and $k_{d}$ should affect difficulty in a linear way and should represent a relative slowdown of a movement on a slope with an assumption that energy expenditure stays the same.
+
+\begin{equation} \label{eq:k-definition}
+k = \frac{\upsilon_{0}}{\upsilon}
+\end{equation}
+
+As it is comparatively difficult to measure slope movement parameters with a constant energy consumption, it is suggested to estimate them based on a data from similar researches.
+
+Energy expenditures may be defined via metabolic equivalent (MET) of an activity, where 1 MET is equal to $4.184\frac{kJ}{kg\cdot{h}}$ \cite{wiki-met}. From \cite{acsm-guidelines} we can see that MET value depends only on velocity if the grade value is fixed and on contrary does not depend on a grade if velocity is constant, i.e. $\frac{MET-MET_{0}}{g} = const$. Thus taking a ratio between an energy consumption level for ascending movement and the one through a horizontal terrain while keeping the same speed we may estimate $k_{u}$.
+
+From \cite{TODO} we have
+
+\begin{equation} \label{eq:met-slow}
+MET=\frac{0.1\upsilon+0.018\upsilon g + 3.5}{3.5}
+\end{equation}
+
+for speeds less than 100 m/min and
+
+\begin{equation} \label{eq:met-fast}
+MET=\frac{21.11 - 0.3593\upsilon + 0.03\upsilon^{2} + 0.018\upsilon g}{3.5}
+\end{equation}
+
+for greater ones. With $g_{0} = 0$ and $MET_{1} = MET_{0}$ formulas \ref{eq:k-definition} and \ref{eq:met-slow} give us
+
+\begin{equation} \label{eq:ku-slow}
+k_{slow} = 0.18g + 1
+\end{equation}
+
+while \ref{eq:k-definition} and \ref{eq:met-fast} result in
+
+\begin{equation} \label{eq:ku-fast}
+k_{fast} = \frac{0.03\upsilon_{2}-0.3593 + 0.018g}{0.03\upsilon_{1}-0.3593}
+\end{equation}
+
+where $g$ is a slope grade in percents.
+
+This approximation is applicable only in a usual human velocities range and for slopes where friction is enough to step without sliding down.
+
+
+\newpage
+\appendix
+\bibliographystyle{plain}
+\bibliography{biblio}
+
+\end{document}
