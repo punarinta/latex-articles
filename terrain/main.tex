@@ -12,23 +12,21 @@
 
 \section{Intro}
 
-The aim of this article is to design a convenient method for calculating infantryman movement speed by feet through an arbitrary terrain and to test it on practice. This article is planned as a part of a series on infantryman computer-aided system design. Tests will be conveyed with the help of MilSim participants in conditions close to battlefield ones.
-
-t.b.d.
+The aim of this article is to design a convenient method for calculating infantryman movement speed by feet through an arbitrary terrain and to test it on practice. This article is planned as a part of a series on infantryman computer-aided system design. Parts of the data will be received theoretically based on earlier researches, parts will be measured directly in situ. Tests will be conveyed with the help of MilSim participants in conditions close to battlefield ones. As all the experiments are done in a boreal forests area, terrain types will be limited to those common to these territories.
 
 \newpage
 
-\section{Theory}
+\section{Theoretical derivations}
 
 \subsection{Terrain slowdown reasons}
 
-Generally there are three main slowdown reasons during a passage through any terrain: placement of obstacles on the way (a), terrain flatness on microlevel (b) and terrain flatness on macrolevel (c). The border between microlevel and macrolevel is suggested to put to a value of step length. Factors (a) and (b) can be joined into one characteristic, let us call it \textit{passability} $p$ and describe it below. Macrolevel flatness, in its turn, describes expenditures linked to altitude changes and is definitely a function of those changes. Let us call this a \textit{slope effect} $s$ and also discuss it below.
+Generally there are three main slowdown reasons during a passage through any terrain: placement of obstacles on the way (a), terrain flatness on microlevel (b) and terrain flatness on macrolevel (c). The border between microlevel and macrolevel is suggested to put to a value of step length, as when the obstacle is greater it is usually already a part of a terrain. Factors (a) and (b) can be joined into one characteristic, let us call it \textit{passability} $p$ and describe it below. Macrolevel flatness, in its turn, describes expenditures linked to altitude changes and is definitely a function of those changes. Let us call this a \textit{slope effect} $s$ and also discuss it below.
 
-As passage time estimations are generally needed when talking about terrain, let us introduce a parameter called \textit{difficulty} $D$, which will be a default movement time multiplier in $t=t_{0}D$, where $t_{0}$ is an ideal terrain passage time and $t$ is a sample terrain passage time, both $t$ and $t_{0}$ are measured at the same energy expenditure rate. As movement through an ideal terrain is fastest by definition let us assume that $D\geq1$ for a non-assisted motion.
+As passage time estimations are generally needed when talking about terrain, let us introduce a parameter called \textit{difficulty} $D$, which will be a default movement time multiplier in $t=t_{0}D$, where $t_{0}$ is an ideal terrain passage time and $t$ is a sample terrain passage time, both $t$ and $t_{0}$ are measured at the same energy expenditure rate. As movement through an ideal terrain \footnote{Where a path has zero grade and nothing obstructs a person from walking.} is fastest by definition let us assume that $D\geq1$ for a non-assisted motion.
 
 
 \subsection{Passability impact}
-Let us define passability as a ratio between the speed of movement through a plain terrain with given obstacles over the movement speed through a terrain with ideal conditions (e.g. a straight flat asphalt road):
+Let us define passability as a ratio between the speed of movement through a plain terrain with given obstacles over the movement speed through a terrain with ideal conditions (a straight flat asphalt road could be a very good example):
 
 \begin{equation} \label{eq:p-definition}
 p = \upsilon_{t}/\upsilon_{0}
@@ -93,7 +91,7 @@ Quick estimation is intended to be done in mind by a person without computer aid
 
 
 \subsubsection{Quick estimation}
-Earlier we have noted that $g = 100 H / L$. Let us use a linear approximation and take $H$ as an altitude difference between the highest and the lowest points on the route while $L$ will be the route length. Although a route length is always greater than plain distance in general case, we will assume for the sake of simplicity that they are equal. Thus $L$ will be the distance between aforementioned points. Then using \ref{eq:s-slow} and \ref{eq:g-def}:
+Earlier we have noted that $g = 100 H / L$. Let us use a linear approximation and take $H$ as an altitude difference between the highest and the lowest points on the route while $L$ will be a distance between two most distant points of the route. Although a route length in general case is always greater than its horizontal projection, we will assume for the sake of simplicity that they are equal. Thus $L$ will be the distance between aforementioned points. Then using \ref{eq:s-slow} and \ref{eq:g-def}:
 
 \begin{equation*}
 s = 18\cdot\frac{H}{L} + 1
@@ -105,9 +103,11 @@ Together with \ref{eq:diff-se} this gives us
 D = \frac{18 H + L}{pL}
 \end{equation*}
 
-\subsubsection{Exact value}
+Quick estimation value needs to be proven experimentally and adjusted based on the results.
 
-During a computer analysis of a terrain map or a GPS track one may get data on every single slope $i$, as a grade level on this slope is by definition constant. Slope effect for every linear part of a path will simply be $s_{i}$. Difficulty on such a slope will be:
+
+\subsubsection{Exact value}
+During a computer analysis of a terrain map or a GPS track one gets data on every single altitude change and therefore on slope $i$, as a grade level on this slope is by definition constant. Slope effect for every linear part of a path will simply be $s_{i}$. Difficulty on such a slope will be:
 
 \begin{equation}
 d_{i} = \frac{1}{p_{i}} \cdot (\frac{18 \Delta h_{i}}{l_{i}} + 1)
@@ -120,7 +120,15 @@ D = \sum d_{i} / N_{steps}
 \end{equation}
 
 
-\section{title}
+\newpage
+\section{Measurements}
+
+\subsection{Passability experiment}
+As mentioned above we are going to measure terrain passability as $t_{0}/t$, where both measurements are done on a flat terrain. $t_{0}$ is a passage time of a distance $L$ on a straight asphalt road, $t$ is a time for an investigated terrain. The following terrain types will be chosen for experiment: soil road, grassy field, clear pine forest, pine forest with dense shrub layer, mixed forest. 
+
+
+\subsection{Results discussion}
+
 
 
 \newpage
